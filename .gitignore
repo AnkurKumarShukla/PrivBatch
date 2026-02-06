@@ -2,7 +2,7 @@
 cache/
 out/
 
-# Ignores development (and goerli) broadcast logs
+# Ignores development broadcast logs
 !/broadcast
 /broadcast/*/31337/
 /broadcast/*/5/
@@ -19,6 +19,35 @@ node_modules/
 
 # Python
 agent/.venv/
+agent/batch_history.json
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# Frontend build
+frontend/.next/
+frontend/out/
+
+# AWS/Deploy artifacts
+amplify.yml
+deploy-agent.bat
+deploy-aws.ps1
+
+# Demo/temp files
+scriptdemo.md
+scriptdemo.txt
+project.txt
+*.log
+
+# IDE
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp
+/tmp/
+*.zip

@@ -8,11 +8,11 @@ export const CONTRACTS = {
   EXECUTOR: "0x79dcDc67710C70be8Ef52e67C8295Fd0dA8A5722" as `0x${string}`,
   COMMIT: "0x5f4E461b847fCB857639D1Ec7277485286b7613F" as `0x${string}`,
   // Tokens - update after running setup-pool.sh
-  TOKEN_A: "" as `0x${string}`,
-  TOKEN_B: "" as `0x${string}`,
+  TOKEN_A: "0x486C739A8A219026B6AB13aFf557c827Db4E267e" as `0x${string}`,
+  TOKEN_B: "0xfB6458d361Bd6F428d8568b0A2828603e89f1c4E" as `0x${string}`,
 } as const;
 
-export const AGENT_API = "http://localhost:8000";
+export const AGENT_API = process.env.NEXT_PUBLIC_AGENT_API || "http://localhost:8000";
 
 export const CHAIN_ID = 11155111; // Sepolia
 

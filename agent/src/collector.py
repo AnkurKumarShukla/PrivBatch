@@ -1,11 +1,15 @@
 """Intent collection API (FastAPI)."""
 
+import json
 import time
+from pathlib import Path
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 
 from .types import LPIntentRequest, BatchStatus, LPIntent
 from .signer import verify_intent_signature
+
+HISTORY_FILE = Path(__file__).parent.parent / "batch_history.json"
 
 
 class IntentCollector:
@@ -18,7 +22,7 @@ class IntentCollector:
         self.batches_executed = 0
         self.last_batch_root: str | None = None
         self.last_batch_tx: str | None = None
-        self.batch_history: list[dict] = []
+        self.batch_history: list[dict] = self._load_history()
 
     def submit_intent(self, request: LPIntentRequest) -> dict:
         """Validate and store a signed intent."""
@@ -99,17 +103,41 @@ class IntentCollector:
                 "timestamp": int(time.time()),
             }
         )
+        self._save_history()
+
+    def _load_history(self) -> list[dict]:
+        """Load batch history from file."""
+        if HISTORY_FILE.exists():
+            try:
+                with open(HISTORY_FILE, "r") as f:
+                    data = json.load(f)
+                    self.batches_executed = len(data)
+                    if data:
+                        self.last_batch_root = data[-1].get("root")
+                        self.last_batch_tx = data[-1].get("tx_hash")
+                    return data
+            except Exception:
+                pass
+        return []
+
+    def _save_history(self):
+        """Save batch history to file."""
+        try:
+            with open(HISTORY_FILE, "w") as f:
+                json.dump(self.batch_history, f, indent=2)
+        except Exception:
+            pass
 
 
 def create_app(collector: IntentCollector, config=None, adaptive=None) -> FastAPI:
     """Create the FastAPI application."""
     app = FastAPI(title="PrivBatch Agent", version="0.1.0")
 
-    # CORS for Next.js frontend
+    # CORS for Next.js frontend (allow all for demo)
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
-        allow_credentials=True,
+        allow_origins=["*"],
+        allow_credentials=False,
         allow_methods=["*"],
         allow_headers=["*"],
     )

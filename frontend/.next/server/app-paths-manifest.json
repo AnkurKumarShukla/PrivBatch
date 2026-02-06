@@ -1,1 +1,9 @@
-{}
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/docs/page": "app/docs/page.js",
+  "/mint/page": "app/mint/page.js",
+  "/monitor/page": "app/monitor/page.js",
+  "/submit/page": "app/submit/page.js",
+  "/privacy/page": "app/privacy/page.js",
+  "/page": "app/page.js"
+}

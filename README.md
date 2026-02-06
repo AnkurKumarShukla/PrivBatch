@@ -254,15 +254,23 @@ cd ..
 
 ### 2. Configure Environment
 
-Copy and fill in `.env`:
+Copy `.env.example` to `.env` and add your keys:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and fill in:
 
 ```bash
 # Required: Sepolia RPC URL (get free from Alchemy or Infura)
 RPC_URL=https://eth-sepolia.g.alchemy.com/v2/YOUR_KEY
 
 # Required: Wallet private key (fund with Sepolia ETH, NO 0x prefix)
-PRIVATE_KEY=your_private_key_here
+PRIVATE_KEY=your_64_char_hex_private_key_here
 ```
+
+All contract addresses are pre-filled in `.env.example` - no need to change them.
 
 Create `frontend/.env.local`:
 
@@ -272,7 +280,22 @@ NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID=your_walletconnect_project_id
 
 Get a free WalletConnect project ID at [cloud.walletconnect.com](https://cloud.walletconnect.com).
 
-### 3. Deploy Contracts (if not already deployed)
+### 3. Smart Contracts (Already Deployed)
+
+**All contracts are already deployed on Sepolia and ready to use!**
+
+The `.env.example` includes pre-deployed addresses:
+- `HOOK_ADDRESS` - PrivBatchHook
+- `EXECUTOR_ADDRESS` - BatchExecutor
+- `COMMIT_ADDRESS` - CommitContract
+- `TOKEN_A` / `TOKEN_B` - Test tokens (anyone can mint)
+
+**You can skip deployment and go directly to Step 4.**
+
+<details>
+<summary>Optional: Deploy your own contracts</summary>
+
+If you want to deploy fresh contracts:
 
 ```bash
 # Deploy core contracts (Hook, Executor, CommitContract)
@@ -283,6 +306,8 @@ bash setup-pool.sh
 ```
 
 Update `.env` with the printed contract addresses.
+
+</details>
 
 ### 4. Start the Agent
 
