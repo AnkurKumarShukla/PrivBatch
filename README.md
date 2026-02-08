@@ -3,7 +3,11 @@
 **Privacy-preserving batched LP position management for Uniswap v4 on Sepolia**
 
 PrivBatch protects liquidity providers from MEV extraction by batching LP intents off-chain, building Merkle trees, and executing them atomically through a Uniswap v4 hook. Individual intent parameters (tick range, amount, timing) stay hidden from MEV bots until batch execution, when it's too late to front-run.
+![alt text](<image (1).jpg>)
+![alt text](<image (2).jpg>)
+![alt text](<image (3).jpg>)
 
+Ref : [MEV attack on Liquidity provider](https://eigenphi.substack.com/p/mev-myth-2-sandwiching-adding-liquidity)
 ---
 
 ## Table of Contents
