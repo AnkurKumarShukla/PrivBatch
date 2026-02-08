@@ -129,21 +129,11 @@ cast send 0x486C739A8A219026B6AB13aFf557c827Db4E267e \
 
 ## Example Batched Transactions
 
-> Add your batched execution transaction hashes here after running the full demo flow.
-
-| Batch # | Merkle Root | Transaction Hash | Intents | Timestamp |
-|---------|-------------|------------------|---------|-----------|
-| 1 | `0x...` | [`0x...`](https://sepolia.etherscan.io/tx/0x...) | — | — |
-| 2 | `0x...` | [`0x...`](https://sepolia.etherscan.io/tx/0x...) | — | — |
-| 3 | `0x...` | [`0x...`](https://sepolia.etherscan.io/tx/0x...) | — | — |
-
-<!--
-To get batch tx hashes:
-1. Submit 2+ intents via the frontend Submit page
-2. Wait for the agent batch loop to trigger (checks every 30s by default)
-3. Check the Monitor page or agent logs for the batch root + tx hash
-4. Paste the hashes above
--->
+| Batch # | Transaction Hash |
+|---------|------------------|
+| 1 | [`0xb14262d0...`](https://sepolia.etherscan.io/tx/0xb14262d03d83764757f08021502757834e08919418915212a033b3abfe08783) |
+| 2 | [`0x2fbe7f40...`](https://sepolia.etherscan.io/tx/0x2fbe7f4001ed9dadc0eadacf925cb0957628e5f10c7587890ce061a739e2d711) |
+| 3 | [`0xd7e78298...`](https://sepolia.etherscan.io/tx/0xd7e7829846f7011e0bbefa7d48f76fdbc0d6b4ca62e57a82fbc6b4af6b055322) |
 
 ---
 
@@ -161,6 +151,34 @@ Each step shows what MEV bots can and cannot see:
 | **6. Hook Verification** | Hook verifies each Merkle proof + EIP-712 signature | Public (verified, positions minted atomically) |
 
 MEV bots see one batch transaction, not individual LP positions. By the time data is revealed on-chain, all positions are already minted atomically -- the front-running window is closed.
+
+### Security Model: Agent API vs Mempool
+
+**Q: Can't bots just monitor the agent API instead of the mempool?**
+
+In the demo, the `/intents/pending` endpoint is public so judges can see the queue. However, this is fundamentally different from mempool monitoring:
+
+| Attack Vector | Mempool | PrivBatch Agent API |
+|---------------|---------|---------------------|
+| What bots see | Pending transactions | Intent data (not txs) |
+| Can bot front-run? | Yes (same block) | No (different blocks) |
+| Timing control | User's tx is public | Agent controls batch timing |
+| Execution | Individual txs | Atomic batch (all-or-nothing) |
+
+**Why API visibility doesn't enable MEV:**
+
+1. **Intents aren't transactions** - Bots can't insert them into a block
+2. **Agent controls timing** - Bot doesn't know when batch will execute
+3. **Atomic execution** - All positions mint in one tx, no sandwich window
+4. **Different blocks** - By the time bot reacts, batch may already be mined
+
+**Production hardening (not in demo):**
+- Add API authentication (JWT/API keys)
+- Remove `/intents/pending` endpoint
+- Rate limiting and IP allowlisting
+- Private agent deployment (VPN/internal network)
+
+The demo API is intentionally open for hackathon demonstration purposes.
 
 ---
 
